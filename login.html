@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - MVP投票系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .login-header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .login-content {
+            padding: 40px;
+        }
+
+        .role-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .role-btn {
+            padding: 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .role-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .role-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .role-btn-icon {
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .demo-tip {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .demo-tip strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .demo-tip p {
+            margin: 4px 0;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                max-width: 100%;
+            }
+
+            .login-header h1 {
+                font-size: 1.5em;
+            }
+
+            .login-content {
+                padding: 30px 20px;
+            }
+
+            .role-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>🏆 MVP投票系统</h1>
+                <p>选择身份并登录</p>
+            </div>
+
+            <div class="login-content">
+                <!-- 身份选择 -->
+                <div class="role-selection">
+                    <button class="role-btn active" data-role="voter" onclick="selectRole('voter')">
+                        <div class="role-btn-icon">🗳️</div>
+                        <div>投票者</div>
+                    </button>
+                    <button class="role-btn" data-role="admin" onclick="selectRole('admin')">
+                        <div class="role-btn-icon">⚙️</div>
+                        <div>管理员</div>
+                    </button>
+                </div>
+
+                <!-- 登录表单 -->
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="username">用户名</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            placeholder="请输入用户名"
+                            required
+                        >
+                        <div class="error-message" id="username-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">密码</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            placeholder="请输入密码"
+                            required
+                        >
+                        <div class="error-message" id="password-error"></div>
+                    </div>
+
+                    <button type="submit" class="login-btn">登 录</button>
+                </form>
+
+                <!-- 演示提示 -->
+                <div class="demo-tip">
+                    <strong>📌 演示账户：</strong>
+                    <p><strong>投票者：</strong> 用户名: voter | 密码: 123456</p>
+                    <p><strong>管理员：</strong> 用户名: admin | 密码: admin123</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedRole = 'voter';
+
+        function selectRole(role) {
+            selectedRole = role;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.role-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-role="${role}"]`).classList.add('active');
+
+            // 清除错误信息
+            document.querySelectorAll('.error-message').forEach(msg => {
+                msg.style.display = 'none';
+            });
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            // 清除错误提示
+            document.querySelectorAll('.error-message').forEach(msg => {
+                msg.style.display = 'none';
+            });
+
+            let isValid = true;
+
+            if (!username) {
+                document.getElementById('username-error').textContent = '请输入用户名';
+                document.getElementById('username-error').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!password) {
+                document.getElementById('password-error').textContent = '请输入密码';
+                document.getElementById('password-error').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // 验证用户
+            const isAuthenticated = authenticateUser(username, password, selectedRole);
+
+            if (isAuthenticated) {
+                // 保存登录信息
+                const userData = {
+                    username: username,
+                    role: selectedRole,
+                    loginTime: new Date().toISOString()
+                };
+                
+                localStorage.setItem('mvpUser', JSON.stringify(userData));
+                
+                // 重定向到应用
+                window.location.href = 'index.html';
+            } else {
+                alert('用户名或密码错误！');
+            }
+        }
+
+        function authenticateUser(username, password, role) {
+            // 演示用户数据库
+            const users = {
+                voter: [
+                    { username: 'voter', password: '123456' },
+                    { username: 'user1', password: '123456' },
+                    { username: 'user2', password: '123456' }
+                ],
+                admin: [
+                    { username: 'admin', password: 'admin123' },
+                    { username: 'admin1', password: 'admin@123' }
+                ]
+            };
+
+            const roleUsers = users[role] || [];
+            return roleUsers.some(user => 
+                user.username === username && user.password === password
+            );
+        }
+
+        // 页面加载时检查是否已登录
+        window.addEventListener('load', () => {
+            const userData = localStorage.getItem('mvpUser');
+            if (userData) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>
