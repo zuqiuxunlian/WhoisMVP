@@ -10,8 +10,16 @@
     <div class="container">
         <!-- 头部 -->
         <header class="header">
-            <h1>🏆 最佳队员投票系统</h1>
-            <p class="subtitle">通过PK方式选出最佳队员</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div>
+                    <h1>🏆 最佳队员投票系统</h1>
+                    <p class="subtitle">通过PK方式选出最佳队员</p>
+                </div>
+                <div id="user-info" style="color: white; text-align: right; margin-top: 10px;">
+                    <p>欢迎 <strong id="username-display"></strong> (<span id="role-display"></span>)</p>
+                    <button id="logout-btn" style="padding: 8px 16px; background: rgba(255,255,255,0.3); border: 1px solid white; color: white; border-radius: 6px; cursor: pointer; font-size: 0.9em; margin-top: 5px;">登出</button>
+                </div>
+            </div>
         </header>
 
         <!-- 主要内容区 -->
@@ -22,7 +30,7 @@
                 <div class="mode-buttons">
                     <button class="mode-btn active" data-mode="pk">⚔️ PK模式</button>
                     <button class="mode-btn" data-mode="view">👁️ 查看排名</button>
-                    <button class="mode-btn" data-mode="manage">⚙️ 管理队员</button>
+                    <button class="mode-btn admin-only" data-mode="manage" style="display: none;">⚙️ 管理队员</button>
                 </div>
             </section>
 
@@ -65,7 +73,7 @@
                 </div>
             </section>
 
-            <!-- 管理队员 -->
+            <!-- 管理队员（仅管理员） -->
             <section id="manage-mode" class="mode-content">
                 <h2>管理队员</h2>
                 <div class="manage-container">
@@ -89,8 +97,8 @@
         <!-- 统计信息 -->
         <footer class="footer">
             <p>总投票数: <span id="total-votes">0</span> | 队员总数: <span id="total-players">0</span></p>
-            <button class="reset-btn" id="reset-btn">重置数据</button>
             <button class="export-btn" id="export-btn">导出结果</button>
+            <button class="reset-btn admin-only" id="reset-btn" style="display: none;">重置数据</button>
         </footer>
     </div>
 
