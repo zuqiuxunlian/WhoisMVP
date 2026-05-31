@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最佳队员投票系统 - MVP选择器</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>🏆 最佳队员投票系统</h1>
+            <p class="subtitle">通过PK方式选出最佳队员</p>
+        </header>
+
+        <!-- 主要内容区 -->
+        <main class="main">
+            <!-- 模式选择 -->
+            <section class="mode-selection">
+                <h2>选择模式</h2>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" data-mode="pk">⚔️ PK模式</button>
+                    <button class="mode-btn" data-mode="view">👁️ 查看排名</button>
+                    <button class="mode-btn" data-mode="manage">⚙️ 管理队员</button>
+                </div>
+            </section>
+
+            <!-- PK模式 -->
+            <section id="pk-mode" class="mode-content active">
+                <h2>PK投票</h2>
+                <div class="pk-container">
+                    <div class="vs-section">
+                        <div class="player-card left">
+                            <img id="player1-img" src="https://via.placeholder.com/150" alt="队员1">
+                            <h3 id="player1-name">队员A</h3>
+                            <p id="player1-votes" class="votes">投票数: 0</p>
+                        </div>
+
+                        <div class="vs-text">VS</div>
+
+                        <div class="player-card right">
+                            <img id="player2-img" src="https://via.placeholder.com/150" alt="队员2">
+                            <h3 id="player2-name">队员B</h3>
+                            <p id="player2-votes" class="votes">投票数: 0</p>
+                        </div>
+                    </div>
+
+                    <div class="vote-buttons">
+                        <button class="vote-btn vote-left" id="vote-btn-1">投票给左边队员</button>
+                        <button class="vote-btn vote-right" id="vote-btn-2">投票给右边队员</button>
+                    </div>
+
+                    <button class="next-btn" id="next-pk">下一轮 →</button>
+                </div>
+            </section>
+
+            <!-- 查看排名 -->
+            <section id="view-mode" class="mode-content">
+                <h2>队员排名</h2>
+                <div class="rankings-container">
+                    <div class="ranking-list" id="ranking-list">
+                        <!-- 排名列表将动态生成 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 管理队员 -->
+            <section id="manage-mode" class="mode-content">
+                <h2>管理队员</h2>
+                <div class="manage-container">
+                    <div class="add-player-form">
+                        <h3>添加新队员</h3>
+                        <input type="text" id="player-name" placeholder="输入队员名称">
+                        <input type="text" id="player-img" placeholder="输入队员头像URL">
+                        <button class="add-btn" id="add-player-btn">添加队员</button>
+                    </div>
+
+                    <div class="players-list">
+                        <h3>现有队员</h3>
+                        <div id="players-container" class="players-grid">
+                            <!-- 队员列表将动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 统计信息 -->
+        <footer class="footer">
+            <p>总投票数: <span id="total-votes">0</span> | 队员总数: <span id="total-players">0</span></p>
+            <button class="reset-btn" id="reset-btn">重置数据</button>
+            <button class="export-btn" id="export-btn">导出结果</button>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
