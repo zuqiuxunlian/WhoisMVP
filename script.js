@@ -4,9 +4,51 @@
 let players = [];
 let votingData = {};
 let currentPair = null;
+let currentUser = null;
+
+// 检查用户认证
+function checkAuth() {
+    const userData = localStorage.getItem('mvpUser');
+    if (!userData) {
+        window.location.href = 'login.html';
+        return;
+    }
+    currentUser = JSON.parse(userData);
+    displayUserInfo();
+    
+    // 设置登出按钮
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    
+    // 根据用户角色显示/隐藏管理选项
+    if (currentUser.role !== 'admin') {
+        document.querySelectorAll('.admin-only').forEach(el => {
+            el.style.display = 'none';
+        });
+    } else {
+        document.querySelectorAll('.admin-only').forEach(el => {
+            el.style.display = 'block';
+        });
+    }
+}
+
+// 显示用户信息
+function displayUserInfo() {
+    const roleName = currentUser.role === 'admin' ? '管理员' : '投票者';
+    document.getElementById('username-display').textContent = currentUser.username;
+    document.getElementById('role-display').textContent = roleName;
+}
+
+// 登出
+function logout() {
+    if (confirm('确定要登出吗？')) {
+        localStorage.removeItem('mvpUser');
+        window.location.href = 'login.html';
+    }
+}
 
 // 初始化应用
 function initApp() {
+    checkAuth();
     loadFromLocalStorage();
     if (players.length === 0) {
         // 添加默认队员
@@ -44,17 +86,29 @@ function setupEventListeners() {
     // 下一轮
     document.getElementById('next-pk').addEventListener('click', loadNextPair);
 
-    // 管理队员
-    document.getElementById('add-player-btn').addEventListener('click', addNewPlayer);
+    // 管理队员（仅管理员）
+    const addBtn = document.getElementById('add-player-btn');
+    if (addBtn) {
+        addBtn.addEventListener('click', addNewPlayer);
+    }
 
     // 重置和导出
-    document.getElementById('reset-btn').addEventListener('click', resetData);
+    const resetBtn = document.getElementById('reset-btn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetData);
+    }
     document.getElementById('export-btn').addEventListener('click', exportResults);
 }
 
 // 模式切换
 function switchMode(e) {
     const mode = e.target.dataset.mode;
+    
+    // 权限检查
+    if (mode === 'manage' && currentUser.role !== 'admin') {
+        alert('只有管理员可以管理队员');
+        return;
+    }
     
     // 更新按钮状态
     document.querySelectorAll('.mode-btn').forEach(btn => {
@@ -139,6 +193,12 @@ function voteFor(index) {
 
 // 添加新队员
 function addNewPlayer() {
+    // 权限检查
+    if (currentUser.role !== 'admin') {
+        alert('只有管理员可以添加队员');
+        return;
+    }
+
     const nameInput = document.getElementById('player-name');
     const imgInput = document.getElementById('player-img');
 
@@ -175,6 +235,12 @@ function addNewPlayer() {
 
 // 删除队员
 function deletePlayer(id) {
+    // 权限检查
+    if (currentUser.role !== 'admin') {
+        alert('只有管理员可以删除队员');
+        return;
+    }
+
     if (confirm('确定要删除这个队员吗？')) {
         players = players.filter(p => p.id !== id);
         delete votingData[id];
@@ -232,6 +298,8 @@ function getRankClass(index) {
 // 渲染队员列表
 function renderPlayersList() {
     const container = document.getElementById('players-container');
+    if (!container) return;
+    
     container.innerHTML = '';
 
     players.forEach(player => {
@@ -241,7 +309,7 @@ function renderPlayersList() {
             <img src="${player.image}" alt="${player.name}">
             <h4>${player.name}</h4>
             <p>投票: ${votingData[player.id] || 0}</p>
-            <button class="delete-btn" onclick="deletePlayer(${player.id})">删除</button>
+            <button class="delete-btn" onclick="deletePlayer(${player.id})" ${currentUser.role !== 'admin' ? 'disabled' : ''} style="${currentUser.role !== 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">删除</button>
         `;
         container.appendChild(item);
     });
@@ -256,6 +324,12 @@ function updateStats() {
 
 // 重置数据
 function resetData() {
+    // 权限检查
+    if (currentUser.role !== 'admin') {
+        alert('只有管理员可以重置数据');
+        return;
+    }
+
     if (confirm('确定要重置所有投票数据吗？此操作无法撤销！')) {
         players.forEach(p => {
             votingData[p.id] = 0;
